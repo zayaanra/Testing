@@ -6,7 +6,7 @@ def connect():
         db="mydb",
         host="localhost",
         user=secret.user,
-        password=secret.passw
+        password=secret.passw,
     )
     return db.cursor()
 
@@ -14,7 +14,7 @@ def connect():
 def create_table(cursor):
     cursor.execute("CREATE TABLE IF NOT EXISTS Food (fruit VARCHAR(2048), color VARCHAR(2048), id int PRIMARY KEY AUTO_INCREMENT")
 
-# This function inserts a record into the table "User".
+# This function inserts a record into the table "Food".
 def insert_record(record, cursor):
     data = json.loads(record)
     cursor.execute("INSERT INTO Food(fruit, color) VALUES (?, ?)", (data["fruit"], data["color"]))
@@ -29,16 +29,19 @@ def retrieve_all(cursor):
 
 # This function retrieves a single record from a database
 def retrieve_single(cursor, id):
+    cursor.execute("SELECT COUNT(1) FROM Food WHERE id = %s" % id)
+    if not cursor.fetchone()[0]:
+        return False
     cursor.execute("SELECT * FROM Food WHERE id = %s" % id)
     return cursor.fetchall()
 
 # This function updates a record in the database.
-def update_record(cursor, record, id):
+def update_record(cursor, new_record, id):
     cursor.execute("SELECT COUNT(1) FROM Food WHERE id = %s" % id)
     if not cursor.fetchone()[0]:
         return False
-    cursor.execute("UPDATE Food SET fruit = %s WHERE id = %s" % (record["fruit"], id))
-    cursor.execute("UPDATE Food SET color = %s WHERE id = %s" % (record["color"], id))
+    cursor.execute("UPDATE Food SET fruit = %s WHERE id = %s" % (new_record["fruit"], id))
+    cursor.execute("UPDATE Food SET color = %s WHERE id = %s" % (new_record["color"], id))
 
 # This function deletes a record from the database.
 def delete_record(cursor, id):
