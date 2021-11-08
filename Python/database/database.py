@@ -1,12 +1,10 @@
-import mysql.connector, json, secret
+import mysql.connector, json
 
 # This function connect to the database.
 def connect():
     db = mysql.connector.connect(
         db="mydb",
         host="localhost",
-        user=secret.user,
-        password=secret.passw,
     )
     return db.cursor()
 
